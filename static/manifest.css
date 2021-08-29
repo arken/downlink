@@ -19,6 +19,18 @@ header > img {
 	margin: 0 auto;
 }
 
+header > a {
+	height: 100%;
+	width: auto;
+	margin: 0 auto;
+}
+
+header > a > img {
+	height: 100%;
+	width: auto;
+	margin: 0 auto;
+}
+
 a {
 	color: #4994DD;
 	text-decoration: none;
@@ -26,7 +38,7 @@ a {
 
 table {
 	width: auto;
-	max-width: 800px;
+	max-width: 1000px;
 	margin: 0 auto;
 }
 
