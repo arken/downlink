@@ -9,11 +9,11 @@ import (
 )
 
 var (
-	Global  config
+	Global  Config
 	Version string = "develop"
 )
 
-type config struct {
+type Config struct {
 	Database database
 	Ipfs     ipfs
 	Manifest manifest
@@ -34,10 +34,8 @@ type web struct {
 }
 
 type ipfs struct {
-	Path       string
-	PrivateKey string
-	PeerID     string
-	Addr       string
+	Path string
+	Addr string
 }
 
 func Init() error {
@@ -48,7 +46,7 @@ func Init() error {
 	}
 
 	// Generate Default Config
-	Global = config{
+	Global = Config{
 		Database: database{
 			Path: "downlink.db",
 		},
@@ -60,10 +58,8 @@ func Init() error {
 			Addr: ":8080",
 		},
 		Ipfs: ipfs{
-			Path:       filepath.Join(user.HomeDir, ".downlink", "ipfs"),
-			PeerID:     "",
-			PrivateKey: "",
-			Addr:       "",
+			Path: filepath.Join(user.HomeDir, ".downlink", "ipfs"),
+			Addr: "",
 		},
 	}
 	err = parseConfigEnv(&Global)
@@ -73,7 +69,7 @@ func Init() error {
 	return err
 }
 
-func parseConfigEnv(input *config) error {
+func parseConfigEnv(input *Config) error {
 	numSubStructs := reflect.ValueOf(input).Elem().NumField()
 	for i := 0; i < numSubStructs; i++ {
 		iter := reflect.ValueOf(input).Elem().Field(i)

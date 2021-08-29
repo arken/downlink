@@ -43,7 +43,7 @@ func Init(path string) (result *DB, err error) {
 			parent TEXT, 
 			modified DATETIME,
 			replications INT,
-			PRIMARY KEY(id)
+			PRIMARY KEY(path)
 		);`,
 	)
 	if err != nil {

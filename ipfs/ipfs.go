@@ -3,6 +3,7 @@ package ipfs
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -34,11 +35,6 @@ type Node struct {
 
 // CreateNode creates an IPFS node and returns its coreAPI
 func CreateNode(repoPath string, args NodeConfArgs) (node *Node, err error) {
-	// Initialize Node ID
-	id := ipfsConfig.Identity{
-		PeerID:  args.PeerID,
-		PrivKey: args.PrivKey,
-	}
 	// Setup IPFS plugins
 	if err := setupPlugins(repoPath); err != nil {
 		return nil, err
@@ -57,7 +53,7 @@ func CreateNode(repoPath string, args NodeConfArgs) (node *Node, err error) {
 	// Open the repo
 	fs, err := openFs(node.ctx, repoPath)
 	if err != nil {
-		err = createFs(node.ctx, repoPath, args.Addr, id, args.BootstrapPeers)
+		err = createFs(node.ctx, repoPath, args.Addr, args.BootstrapPeers)
 		if err != nil {
 			return nil, err
 		}
@@ -102,13 +98,13 @@ func openFs(ctx context.Context, repoPath string) (result repo.Repo, err error) 
 }
 
 // createFs builds the IPFS configuration repository.
-func createFs(ctx context.Context, path, addr string, id ipfsConfig.Identity, bootstrapPeers []string) (err error) {
+func createFs(ctx context.Context, path, addr string, bootstrapPeers []string) (err error) {
 	// Check if directory to configuration exists
 	if _, err = os.Stat(path); os.IsNotExist(err) {
 		os.MkdirAll(path, os.ModePerm)
 	}
 	// Create a ipfsConfig with default options and a 2048 bit key
-	cfg, err := ipfsConfig.InitWithIdentity(id)
+	cfg, err := ipfsConfig.Init(ioutil.Discard, 2048)
 	if err != nil {
 		return err
 	}

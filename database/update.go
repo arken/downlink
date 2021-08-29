@@ -35,8 +35,8 @@ func (db *DB) update(entry Node) (err error) {
 			cid = ?,
 			parent = ?,
 			modified = ?,
-			replications = ?,
-			WHERE id = ?;`)
+			replications = ? 
+			WHERE path = ?;`)
 	if err != nil {
 		return err
 	}

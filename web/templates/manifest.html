@@ -6,32 +6,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-<header><img src="/static/logo.jpg"></header><table border="0">
+<header><img src="/static/logo.png"></header><table border="0">
 <tr>
 <th>Name</th>
-<th>Last modified</th>
 <th>Size</th>
+<th>Replications</th>
 </tr>
+{{range $val := .}}
 <tr>
-<td><a href="shannon">shannon</a></td>
-<td>27-08-2021 19:19:03</td>
-<td align="right"></td>
+<td><a href="{{$val.Path}}">{{$val.Name}}</a></td>
+<td align="right">{{if eq $val.Type "file" }} {{$val.Size}} {{end}}</td>
+<td align="right">{{if eq $val.Type "file" }} {{$val.Replications}} {{end}}</td>
 </tr>
-<tr>
-<td><a href="unstable">unstable</a></td>
-<td>28-08-2021 21:20:20</td>
-<td align="right"></td>
-</tr>
-<tr>
-<td><a href="logo.jpg">logo.jpg</a></td>
-<td>20-05-2017 12:51:38</td>
-<td align="right">10.1K</td>
-</tr>
-<tr>
-<td><a href="solus.gpg">solus.gpg</a></td>
-<td>11-09-2018 11:18:44</td>
-<td align="right">3.1K</td>
-</tr>
+{{end}}
 </table>
 </body>
 </html>

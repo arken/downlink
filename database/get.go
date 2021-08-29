@@ -7,7 +7,7 @@ import (
 
 // Get searches for and returns a the corresponding entry from the
 // database if the entry exists.
-func (db *DB) Get(id string) (result Node, err error) {
+func (db *DB) Get(path string) (result Node, err error) {
 	// Attempt to grab lock.
 	db.lock.Lock()
 	defer db.lock.Unlock()
@@ -19,7 +19,7 @@ func (db *DB) Get(id string) (result Node, err error) {
 	}
 
 	// Get and return entry from DB if it exists
-	return db.get(id)
+	return db.get(path)
 }
 
 // get returns the matching entry from the db if it exists.
@@ -61,7 +61,7 @@ func (db *DB) GetChildren(parentPath string, limit, page int) (result []Node, er
 	}
 
 	rows, err := db.conn.Query(
-		"SELECT * FROM nodes WHERE parent = ? LIMIT ? OFFSET ?;",
+		"SELECT * FROM nodes WHERE parent = ? ORDER BY name LIMIT ? OFFSET ?;",
 		parentPath,
 		limit,
 		limit*page,
