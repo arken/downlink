@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"sync"
+
 	"github.com/arken/downlink/config"
 	"github.com/arken/downlink/database"
 	"github.com/arken/downlink/ipfs"
@@ -12,4 +14,5 @@ type Node struct {
 	DB       *database.DB
 	Node     *ipfs.Node
 	Manifest *manifest.Manifest
+	Lock     *sync.Mutex
 }

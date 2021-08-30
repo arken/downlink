@@ -3,9 +3,17 @@ package engine
 import (
 	"database/sql"
 	"log"
+	"time"
 )
 
 func (n *Node) UpdateMetadata() {
+	// Let other jobs run first.
+	time.Sleep(3 * time.Second)
+
+	// Attempt to grab lock
+	n.Lock.Lock()
+	defer n.Lock.Unlock()
+
 	var err error
 	for i := 0; ; i++ {
 		nodes, err := n.DB.GetAll(100, i)

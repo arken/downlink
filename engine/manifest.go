@@ -9,6 +9,10 @@ import (
 )
 
 func (n *Node) SyncManifest() {
+	// Attempt to grab lock
+	n.Lock.Lock()
+	defer n.Lock.Unlock()
+
 	// Pull changes from upstream manifest
 	err := n.Manifest.Pull()
 	if err != nil {

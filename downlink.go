@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"sync"
 	"time"
 
 	"github.com/arken/downlink/config"
@@ -57,6 +58,7 @@ func main() {
 		DB:       db,
 		Node:     ipfs,
 		Manifest: manifest,
+		Lock:     &sync.Mutex{},
 	}
 
 	// Create Task Scheduler
