@@ -54,12 +54,10 @@ func (n *Node) handleMain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if node.Type == "file" {
-		file, err := n.Node.Cat(node.CID)
+		err := n.Node.Cat(node.CID, w)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
 		}
-		w.Write(file)
 		return
 	}
 
