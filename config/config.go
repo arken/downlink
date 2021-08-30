@@ -30,7 +30,8 @@ type manifest struct {
 }
 
 type web struct {
-	Addr string
+	Addr       string
+	ForceHTTPS bool
 }
 
 type ipfs struct {
@@ -55,7 +56,8 @@ func Init() error {
 			Path: filepath.Join(user.HomeDir, ".downlink", "manifest"),
 		},
 		Web: web{
-			Addr: ":8080",
+			Addr:       ":8080",
+			ForceHTTPS: true,
 		},
 		Ipfs: ipfs{
 			Path: filepath.Join(user.HomeDir, ".downlink", "ipfs"),

@@ -49,7 +49,7 @@ func main() {
 		Node: ipfs,
 	}
 
-	go web.Start(config.Global.Web.Addr)
+	go web.Start(config.Global.Web.Addr, config.Global.Web.ForceHTTPS)
 
 	// Initialize Arken Engine
 	engine := engine.Node{

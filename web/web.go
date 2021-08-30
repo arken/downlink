@@ -16,10 +16,17 @@ type Node struct {
 	Node *ipfs.Node
 }
 
-func (n *Node) Start(addr string) {
+func (n *Node) Start(addr string, forceHTTPS bool) {
 	// Setup Chi Router
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	if forceHTTPS {
+		r.Use(middleware.RouteHeaders().Route(
+			"X-Forwarded-Proto",
+			"http",
+			upgradeToHTTPS,
+		).Handler)
+	}
 
 	// Setup handler functions for api endpoints
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -27,6 +34,12 @@ func (n *Node) Start(addr string) {
 
 	// Start http server and listen for incoming connections
 	http.ListenAndServe(addr, r)
+}
+
+func upgradeToHTTPS(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "https://"+r.Host+r.RequestURI, http.StatusMovedPermanently)
+	})
 }
 
 func (n *Node) handleMain(w http.ResponseWriter, r *http.Request) {
