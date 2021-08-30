@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/BurntSushi/toml v0.4.1
 	github.com/dustin/go-humanize v1.0.0
+	github.com/gabriel-vasile/mimetype v1.1.2
 	github.com/go-chi/chi/v5 v5.0.4
 	github.com/go-co-op/gocron v1.7.1
 	github.com/go-git/go-git/v5 v5.4.2
