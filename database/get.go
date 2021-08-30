@@ -105,6 +105,64 @@ func (db *DB) GetChildren(parentPath string, limit, page int) (result []Node, er
 	return result, err
 }
 
+func (db *DB) GetAll(limit, page int) (result []Node, err error) {
+	// Attempt to grab lock.
+	db.lock.Lock()
+	defer db.lock.Unlock()
+
+	// Create files slice with limit as size.
+	result = []Node{}
+
+	// Ping database to check that it still exists.
+	err = db.conn.Ping()
+	if err != nil {
+		return result, err
+	}
+
+	rows, err := db.conn.Query(
+		"SELECT * FROM nodes LIMIT ? OFFSET ?;",
+		limit,
+		limit*page,
+	)
+	if err != nil {
+		return result, err
+	}
+
+	// Iterate through rows found and insert them into the list.
+	for rows.Next() {
+		var f Node
+
+		err = rows.Scan(
+			&f.Path,
+			&f.Name,
+			&f.Type,
+			&f.Size,
+			&f.CID,
+			&f.Parent,
+			&f.Modified,
+			&f.Replications)
+
+		if err != nil {
+			rows.Close()
+			return nil, err
+		}
+
+		result = append(result, f)
+	}
+
+	// Check for errors and return
+	err = rows.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result) <= 0 {
+		return nil, sql.ErrNoRows
+	}
+
+	return result, err
+}
+
 func (db *DB) GetAllOlderThan(age time.Time, limit, page int) (result []Node, err error) {
 	// Attempt to grab lock.
 	db.lock.Lock()

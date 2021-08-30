@@ -7,6 +7,7 @@ import (
 
 	"github.com/arken/downlink/database"
 	"github.com/arken/downlink/ipfs"
+	"github.com/dustin/go-humanize"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -73,7 +74,11 @@ func (n *Node) handleMain(w http.ResponseWriter, r *http.Request) {
 		children = append(children, results...)
 	}
 
-	t := template.New("manifest.html")
+	t := template.New("manifest.html").Funcs(template.FuncMap{
+		"hsize": func(input int64) string {
+			return humanize.Bytes(uint64(input))
+		},
+	})
 	t, err = t.ParseFiles("web/templates/manifest.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

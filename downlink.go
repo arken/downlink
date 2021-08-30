@@ -66,6 +66,9 @@ func main() {
 	// Check for and sync updates to the manifest every hour.
 	tasks.Every(15).Minutes().Do(engine.SyncManifest)
 
+	// Update file metadata (size & replications) daily
+	tasks.Every(1).Day().Do(engine.UpdateMetadata)
+
 	// Start Background Tasks
 	tasks.StartBlocking()
 

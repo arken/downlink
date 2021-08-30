@@ -30,7 +30,7 @@
 {{range $val := .}}
 <tr>
 <td><a href="{{$val.Path}}">{{$val.Name}}</a></td>
-<td align="right">{{if eq $val.Type "file" }} {{$val.Size}} {{end}}</td>
+<td align="right">{{if eq $val.Type "file" }} {{hsize $val.Size}} {{end}}</td>
 <td align="right">{{if eq $val.Type "file" }} {{$val.Replications}} {{end}}</td>
 </tr>
 {{end}}
