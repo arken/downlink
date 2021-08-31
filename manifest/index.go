@@ -48,21 +48,20 @@ func (m *Manifest) indexWorker(db *database.DB, output chan<- Result) {
 			// Add filepaths all the way up to the root.
 			fpath := strings.TrimSuffix(strings.TrimPrefix(path, m.path), ".ks")
 			for {
-				result := Result{
-					Status: "add",
-					Node: database.Node{
-						Path:   fpath,
-						Name:   filepath.Base(fpath),
-						Type:   "dir",
-						Parent: filepath.Dir(fpath),
-					},
-				}
-
 				// Check if entry is already in the database.
-				_, err := db.Get(fpath)
+				found, err := db.Get(fpath)
 				if err == nil || err != sql.ErrNoRows {
-					db.Update(result.Node)
+					db.Update(found)
 				} else {
+					result := Result{
+						Status: "add",
+						Node: database.Node{
+							Path:   fpath,
+							Name:   filepath.Base(fpath),
+							Type:   "dir",
+							Parent: filepath.Dir(fpath),
+						},
+					}
 					output <- result
 				}
 
@@ -86,6 +85,13 @@ func (m *Manifest) indexWorker(db *database.DB, output chan<- Result) {
 				// Split data on white space.
 				data := strings.Fields(scanner.Text())
 
+				// Check if entry is already in the database.
+				found, err := db.Get(filepath.Join(parentPath, data[1]))
+				if err == nil || err != sql.ErrNoRows {
+					db.Update(found)
+					continue
+				}
+
 				result := Result{
 					Status: "add",
 					Node: database.Node{
@@ -95,13 +101,6 @@ func (m *Manifest) indexWorker(db *database.DB, output chan<- Result) {
 						CID:    data[0],
 						Parent: parentPath,
 					},
-				}
-
-				// Check if entry is already in the database.
-				_, err := db.Get(filepath.Join(parentPath, data[1]))
-				if err == nil || err != sql.ErrNoRows {
-					db.Update(result.Node)
-					continue
 				}
 
 				output <- result
