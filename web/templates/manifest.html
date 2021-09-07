@@ -27,13 +27,26 @@
 <th>Size</th>
 <th>Replications</th>
 </tr>
-{{range $val := .}}
+{{range $val := .Children}}
 <tr>
 <td><a href="{{$val.Path}}">{{$val.Name}}</a></td>
 <td align="right">{{if eq $val.Type "file" }} {{hsize $val.Size}} {{end}}</td>
 <td align="right">{{if eq $val.Type "file" }} {{$val.Replications}} {{end}}</td>
 </tr>
 {{end}}
+</table>
+<table>
+<th></th>
+<tr></tr>
+<tr></tr>
+<tr>
+{{ if ge .Prev 0 }}
+<td align="left"><a href="{{.Path}}?page={{.Prev}}" class="previous round">&#8249;</a></td>
+{{ end }}
+{{ $length := len .Children }} {{ if eq $length 500 }}
+<td align="right"><a href="{{.Path}}?page={{.Next}}" class="next round">&#8250;</a></td>
+{{ end }}
+</tr>
 </table>
 </body>
 </html>

@@ -44,7 +44,7 @@ func Init(path string) (result *DB, err error) {
 			modified DATETIME,
 			replications INT,
 			PRIMARY KEY(path)
-		);`,
+		); PRAGMA busy_timeout = 5000;`,
 	)
 	if err != nil {
 		return nil, err

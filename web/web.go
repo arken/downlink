@@ -6,7 +6,9 @@ import (
 	"io"
 	"mime"
 	"net/http"
+	"net/url"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -52,6 +54,13 @@ func upgradeToHTTPS(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "https://"+r.Host+r.RequestURI, http.StatusMovedPermanently)
 	})
+}
+
+type input struct {
+	Children []database.Node
+	Path     string
+	Next     int
+	Prev     int
 }
 
 func (n *Node) handleMain(w http.ResponseWriter, r *http.Request) {
@@ -125,16 +134,26 @@ func (n *Node) handleMain(w http.ResponseWriter, r *http.Request) {
 		http.ServeContent(w, r, node.Name, node.Modified, content)
 	}
 
-	children := []database.Node{}
-	for i := 0; ; i++ {
-		results, err := n.DB.GetChildren(node.Path, 50, i)
-		if err != nil && err == sql.ErrNoRows {
-			break
-		} else if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+	m, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil {
+		http.Redirect(w, r, node.Path, http.StatusTemporaryRedirect)
+		return
+	}
+
+	page := 0
+	pageData := m.Get("page")
+	if pageData != "" {
+		page, err = strconv.Atoi(pageData)
+		if err != nil {
+			http.Redirect(w, r, node.Path, http.StatusTemporaryRedirect)
 			return
 		}
-		children = append(children, results...)
+	}
+
+	children, err := n.DB.GetChildren(node.Path, 500, page)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	t := template.New("manifest.html").Funcs(template.FuncMap{
@@ -148,7 +167,12 @@ func (n *Node) handleMain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = t.Execute(w, children)
+	err = t.Execute(w, input{
+		Children: children,
+		Path:     node.Path,
+		Next:     page + 1,
+		Prev:     page - 1,
+	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
