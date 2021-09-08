@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -61,15 +62,30 @@ func main() {
 		Lock:     &sync.Mutex{},
 	}
 
+	fmt.Println("Setting up background task system...")
+
 	// Create Task Scheduler
 	tasks := gocron.NewScheduler(time.UTC)
 
+	// Set the max number of concurrent jobs to 3.
+	tasks.SetMaxConcurrentJobs(1, gocron.WaitMode)
+
 	// Configure Background Tasks
 	// Check for and sync updates to the manifest every hour.
-	tasks.Every(15).Minutes().Do(engine.SyncManifest)
+	syncManifest, err := tasks.Every(15).Minutes().Do(engine.SyncManifest)
+	if err != nil {
+		log.Fatal(err)
+	}
+	syncManifest.SingletonMode()
 
 	// Update file metadata (size & replications) daily
-	tasks.Every(1).Day().Do(engine.UpdateMetadata)
+	updateMetadata, err := tasks.Every(1).Day().Do(engine.UpdateMetadata)
+	if err != nil {
+		log.Fatal(err)
+	}
+	updateMetadata.SingletonMode()
+
+	fmt.Println("Background tasks setup.")
 
 	// Start Background Tasks
 	tasks.StartBlocking()

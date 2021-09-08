@@ -46,6 +46,8 @@ func (n *Node) Start(addr string, forceHTTPS bool) {
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	r.Get("/*", n.handleMain)
 
+	fmt.Println("Started web server.")
+
 	// Start http server and listen for incoming connections
 	http.ListenAndServe(addr, r)
 }
