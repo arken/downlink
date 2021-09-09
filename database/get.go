@@ -120,7 +120,7 @@ func (db *DB) GetAll(limit, page int) (result []Node, err error) {
 	}
 
 	rows, err := db.conn.Query(
-		"SELECT * FROM nodes LIMIT ? OFFSET ?;",
+		"SELECT * FROM nodes ORDER BY path LIMIT ? OFFSET ?;",
 		limit,
 		limit*page,
 	)

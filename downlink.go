@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"sync"
 	"time"
 
 	"github.com/arken/downlink/config"
@@ -59,7 +58,6 @@ func main() {
 		DB:       db,
 		Node:     ipfs,
 		Manifest: manifest,
-		Lock:     &sync.Mutex{},
 	}
 
 	fmt.Println("Setting up background task system...")

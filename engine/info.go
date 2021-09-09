@@ -2,18 +2,12 @@ package engine
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
-	"time"
 )
 
 func (n *Node) UpdateMetadata() {
-	// Let other jobs run first.
-	time.Sleep(3 * time.Second)
-
-	// Attempt to grab lock
-	n.Lock.Lock()
-	defer n.Lock.Unlock()
-
+	fmt.Println("Starting update of db metadata...")
 	var err error
 	for i := 0; ; i++ {
 		nodes, err := n.DB.GetAll(100, i)
@@ -46,4 +40,5 @@ func (n *Node) UpdateMetadata() {
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 	}
+	fmt.Println("DB metadata update complete.")
 }
