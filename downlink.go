@@ -66,7 +66,7 @@ func main() {
 	tasks := gocron.NewScheduler(time.UTC)
 
 	// Set the max number of concurrent jobs to 3.
-	tasks.SetMaxConcurrentJobs(1, gocron.WaitMode)
+	tasks.SetMaxConcurrentJobs(1, gocron.RescheduleMode)
 
 	// Configure Background Tasks
 	// Check for and sync updates to the manifest every hour.
