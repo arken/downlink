@@ -26,8 +26,11 @@ func (n *Node) FindProvs(hash string, maxPeers int) (replications int, err error
 	}
 
 	// Iterate through resulting responses and add them up.
-	for range output {
-		replications++
+	// Don't count one's own self in the replications.
+	for p := range output {
+		if p.ID.String() != n.node.Identity.String() {
+			replications++
+		}
 	}
 
 	return replications, nil

@@ -110,7 +110,7 @@ func createFs(ctx context.Context, path, addr string, bootstrapPeers []string) (
 	}
 	// Set default ipfsConfig values
 	cfg.Datastore.StorageMax = "5GB"
-	cfg.Reprovider.Strategy = "roots"
+	cfg.Reprovider.Strategy = "pinned"
 	cfg.Routing.Type = "dhtserver"
 	cfg.Bootstrap = bootstrapPeers
 	cfg.Swarm.ConnMgr.HighWater = 1200

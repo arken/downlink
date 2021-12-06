@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/arken/downlink/database"
 	"github.com/arken/downlink/ipfs"
@@ -44,6 +45,7 @@ func (n *Node) Start(addr string, forceHTTPS bool) {
 
 	// Setup handler functions for api endpoints
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	r.Handle("/robots.txt", http.FileServer(http.Dir("static")))
 	r.Get("/*", n.handleMain)
 
 	fmt.Println("Started web server.")
@@ -168,6 +170,11 @@ func (n *Node) handleMain(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Cache-Control", "max-age:290304000, public")
+	w.Header().Set("Last-Modified", time.Now().Format(http.TimeFormat))
+	w.Header().Set("Expires", time.Now().Add(15*time.Minute).Format(http.TimeFormat))
 
 	err = t.Execute(w, input{
 		Children: children,

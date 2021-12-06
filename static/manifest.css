@@ -1,9 +1,22 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
+@font-face {
+	font-family: "Nitti Light";
+	font-weight: normal;
+	src: url('/static/fonts/nitti/nitti-light-v500.eot') format('embedded-opentype'),
+       url('/static/fonts/nitti/nitti-light-v500.woff') format('woff');
+}
+
+@font-face {
+	font-family: "Nitti Light";
+	font-weight: bold;
+	src: url('/static/fonts/nitti/nitti-medium-v500.eot') format('embedded-opentype'),
+       url('/static/fonts/nitti/nitti-medium-v500.woff') format('woff'),
+       url('/static/fonts/nitti/nitti-medium-v500.woff2') format('woff2');
+}
 
 body {
 	background-color: #f5f5f5;
 	color: #333333;
-	font-family: "Roboto Mono";
+	font-family: "Nitti Light", Helvetica, sans-serif;
 }
 
 header {
